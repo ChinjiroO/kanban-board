@@ -1,21 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
+
+import Navbar from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
 
 function App() {
+	const [open, setOpen] = useState(false);
+	const handleOpen = () => {
+		setOpen(!open);
+	};
+
 	return (
-		<div className="App">
-			<header className="App-header">
-				<p>
-					Edit <code>src/App.js</code> and save to reload.
-				</p>
-				<a
-					className="App-link"
-					href="https://reactjs.org"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					Learn React
-				</a>
-			</header>
+		<div className="h-screen overflow-hidden">
+			<Navbar onClick={handleOpen} open={open} />
+			<main className="flex">
+				{open ? <Sidebar /> : null}
+				<div className="">This's body</div>
+			</main>
 		</div>
 	);
 }
