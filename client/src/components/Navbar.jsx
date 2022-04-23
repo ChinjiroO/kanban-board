@@ -1,11 +1,10 @@
 import React from "react";
-import { RiArrowDownSLine, RiCloseLine } from "react-icons/ri";
+import { RiCloseLine } from "react-icons/ri";
 import { HiMenu } from "react-icons/hi";
 
 function Navbar({ onClick, open }) {
   return (
     <nav className="flex justify-between items-center w-screen h-14 px-4 py-2 shadow-lg bg-white border border-b-gray-200 text-neutral-800 font-medium">
-      {/* left */}
       <div className="flex gap-4 items-center">
         {/* menu button not show on md screen */}
         <button
@@ -25,19 +24,6 @@ function Navbar({ onClick, open }) {
           className="h-8 w-8 object-cover rounded-md"
         />
         <p className="uppercase">kanban</p>
-      </div>
-      {/* right */}
-      <div className="flex gap-4 items-center">
-        <p className="hidden md:flex">Techin's board</p>
-        <img
-          src={`https://i.pravatar.cc/300`}
-          alt="profile_image"
-          className="h-8 w-8 object-cover rounded-full"
-        />
-        {/* dropdown-menu. */}
-        <button className="flex items-center justify-center hover:bg-neutral-300 rounded-sm transition-all duration-200">
-          <RiArrowDownSLine className="text-2xl" />
-        </button>
       </div>
     </nav>
   );
