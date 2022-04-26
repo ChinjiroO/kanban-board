@@ -1,77 +1,117 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { DragDropContext } from "react-beautiful-dnd";
+import Group from "./Group";
+import { useParams } from "react-router-dom";
 
-import { IoMdAdd } from "react-icons/io";
+const removeFromList = (list, index) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(index, 1);
+  return [removed, result];
+};
 
-function Board() {
+const addToList = (list, index, element) => {
+  const result = Array.from(list);
+  result.splice(index, 0, element);
+  return result;
+};
+
+const Board = ({ boards }) => {
+  let { board_id } = useParams();
+  const [task, setTask] = useState(tasks);
+  const [currentBoard, setCurrentBoard] = useState(null);
+  const [groupByBoard, setGroupByBoard] = useState(null);
+
+  useEffect(() => {
+    let splitBoardId = parseInt(board_id?.split("board-")[1]);
+    function getBoardByUrl(url) {
+      if (url) {
+        return boards.find((board) => board.id === url);
+      }
+      return boards;
+    }
+    setCurrentBoard(getBoardByUrl(splitBoardId));
+    function getGroupsByBoard(boardId) {
+      return groups.filter((g) => g.board_id === boardId);
+    }
+    setGroupByBoard(getGroupsByBoard(splitBoardId));
+  }, [boards, board_id]);
+
+  function onDragEnd(result) {
+    if (!result.destination) {
+      return;
+    }
+    const taskCopy = { ...task };
+    const sourceList = taskCopy[result.source.droppableId];
+    const [removedElement, newSourceList] = removeFromList(
+      sourceList,
+      result.source.index
+    );
+    taskCopy[result.source.droppableId] = newSourceList;
+    const destinationList = taskCopy[result.destination.droppableId];
+    taskCopy[result.destination.droppableId] = addToList(
+      destinationList,
+      result.destination.index,
+      removedElement
+    );
+
+    setTask(taskCopy);
+  }
   return (
     <div className="flex flex-col min-h-screen w-screen py-8 px-6 mr-6 md:px-12 transition-all overflow-y-auto">
-      <p className="font-semibold text-2xl sm:text-3xl">project-01</p>
-      <div className="flex gap-12 overflow-auto my-10">
-        {Groups.map((group, index) => (
-          <Group group={group} key={index} />
-        ))}
-      </div>
+      <p className="font-semibold text-2xl sm:text-3xl">{currentBoard?.name}</p>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="flex gap-12 overflow-auto my-10">
+          {groupByBoard?.map((group) => {
+            return <Group group={group.title} key={group.id} tasks={task} />;
+          })}
+        </div>
+      </DragDropContext>
     </div>
   );
-}
+};
 
 export default Board;
 
-export const Group = ({ group }) => {
-  return (
-    <div className="flex flex-col min-w-[20rem] w-80 gap-3">
-      <p className="font-semibold text-xl">{group.title}</p>
-      <ul className="flex flex-col bg-zinc-100 w-full rounded-md p-4 gap-2">
-        {group.tasks.map((task, index) => (
-          <TaskCard task={task} key={index} />
-        ))}
-      </ul>
-      <NewTaskBtn />
-    </div>
-  );
-};
-
-export const TaskCard = ({ task }) => {
-  return (
-    <li>
-      <div className="flex flex-col w-full h-fit bg-white border border-gray-200 p-4 rounded-md">
-        <p>{task.title}</p>
-        <div className="flex flex-row gap-2">
-          {task.tags.map((task, index) => (
-            <p key={index} className="rounded-md p-1 bg-gray-100">
-              {task}
-            </p>
-          ))}
-        </div>
-      </div>
-    </li>
-  );
-};
-
-export const NewTaskBtn = () => {
-  return (
-    <button className="flex gap-2 justify-center items-center w-full p-2 bg-zinc-100 rounded-md text-zinc-500 hover:bg-zinc-300 hover:text-zinc-700 duration-200">
-      <IoMdAdd />
-      New a task
-    </button>
-  );
-};
-
-const Groups = [
+const groups = [
   {
+    id: 1,
     title: "On going",
-    tasks: [
-      { title: "comp: fix sidebar state.", tags: ["idea", "component"] },
-      { title: "task: 2", tags: ["UX/UI"] },
-      { title: "something u need to do.", tags: ["UX/UI"] },
-    ],
+    board_id: 1,
   },
   {
+    id: 2,
     title: "In progress",
-    tasks: [],
+    board_id: 1,
   },
   {
+    id: 3,
     title: "Done",
-    tasks: [{ title: "test: done", tags: ["back-end"] }],
+    board_id: 1,
+  },
+  {
+    id: 4,
+    title: "test",
+    board_id: 4,
+  },
+];
+
+const tasks = [
+  { id: 1, title: "Commodo id et id aliquip elit amet cillum.", group_id: 1 },
+  {
+    id: 2,
+    title: "Lorem Lorem reprehenderit occaecat ea sunt sint.",
+    group_id: 2,
+  },
+  {
+    id: 3,
+    title:
+      "Labore enim consequat nostrud aliqua voluptate amet excepteur sint qui deserunt ipsum ullamco minim.",
+    group_id: 1,
+  },
+  { id: 4, title: "Adipisicing in do velit ea.", group_id: 1 },
+  {
+    id: 5,
+    title: "Sint consectetur exercitation proident dolor excepteur qui.",
+    group_id: 2,
   },
 ];
