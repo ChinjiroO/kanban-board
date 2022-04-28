@@ -3,26 +3,42 @@ import { DragDropContext } from "react-beautiful-dnd";
 import Group from "./Group";
 import { useParams } from "react-router-dom";
 
-const removeFromList = (list, index) => {
-  const result = Array.from(list);
+const removeFromGroup = (group, index) => {
+  const result = Array.from(group);
   const [removed] = result.splice(index, 1);
   return [removed, result];
 };
 
-const addToList = (list, index, element) => {
-  const result = Array.from(list);
-  result.splice(index, 0, element);
+const addToGroup = (group, index, task) => {
+  const result = Array.from(group);
+  result.splice(index, 0, task);
   return result;
+};
+
+const generateGroups = (bId) => {
+  let splitBoardId = parseInt(bId?.split("board-")[1]);
+  return groups
+    .filter((g) => g.board_id === splitBoardId)
+    .map((g) => g.id)
+    .reduce(
+      (acc, listKey) => ({
+        ...acc,
+        [listKey]: taskLists.filter((task) => task.group_id === listKey),
+      }),
+      {}
+    );
 };
 
 const Board = ({ boards }) => {
   let { board_id } = useParams();
-  const [task, setTask] = useState(tasks);
+  const [tasks, setTasks] = useState(generateGroups(board_id));
   const [currentBoard, setCurrentBoard] = useState(null);
   const [groupByBoard, setGroupByBoard] = useState(null);
 
   useEffect(() => {
+    setTasks(generateGroups(board_id));
     let splitBoardId = parseInt(board_id?.split("board-")[1]);
+
     function getBoardByUrl(url) {
       if (url) {
         return boards.find((board) => board.id === url);
@@ -30,6 +46,7 @@ const Board = ({ boards }) => {
       return boards;
     }
     setCurrentBoard(getBoardByUrl(splitBoardId));
+
     function getGroupsByBoard(boardId) {
       return groups.filter((g) => g.board_id === boardId);
     }
@@ -40,30 +57,40 @@ const Board = ({ boards }) => {
     if (!result.destination) {
       return;
     }
-    const taskCopy = { ...task };
-    const sourceList = taskCopy[result.source.droppableId];
-    const [removedElement, newSourceList] = removeFromList(
-      sourceList,
+
+    const taskCopy = { ...tasks };
+    const sourceGroup = taskCopy[result.source.droppableId];
+
+    const [removedTask, newSourceGroup] = removeFromGroup(
+      sourceGroup,
       result.source.index
     );
-    taskCopy[result.source.droppableId] = newSourceList;
-    const destinationList = taskCopy[result.destination.droppableId];
-    taskCopy[result.destination.droppableId] = addToList(
-      destinationList,
+
+    taskCopy[result.source.droppableId] = newSourceGroup;
+
+    const destinationGroup = taskCopy[result.destination.droppableId];
+
+    taskCopy[result.destination.droppableId] = addToGroup(
+      destinationGroup,
       result.destination.index,
-      removedElement
+      removedTask
     );
 
-    setTask(taskCopy);
+    setTasks(taskCopy);
   }
   return (
-    <div className="flex flex-col min-h-screen w-screen py-8 px-6 mr-6 md:px-12 transition-all overflow-y-auto">
+    <div className="flex flex-col min-h-screen w-screen py-8 px-6 mr-6 md:px-12 transition-all">
       <p className="font-semibold text-2xl sm:text-3xl">{currentBoard?.name}</p>
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex gap-12 overflow-auto my-10">
-          {groupByBoard?.map((group) => {
-            return <Group group={group.title} key={group.id} tasks={task} />;
-          })}
+          {groupByBoard?.map((group) => (
+            <Group
+              title={group.title}
+              groupId={group.id}
+              key={group.id}
+              tasks={tasks[group.id]}
+            />
+          ))}
         </div>
       </DragDropContext>
     </div>
@@ -95,23 +122,22 @@ const groups = [
   },
 ];
 
-const tasks = [
-  { id: 1, title: "Commodo id et id aliquip elit amet cillum.", group_id: 1 },
+const taskLists = [
+  { id: "1", title: "Task 001", group_id: 1 },
   {
-    id: 2,
-    title: "Lorem Lorem reprehenderit occaecat ea sunt sint.",
+    id: "2",
+    title: "Task 002",
     group_id: 2,
   },
   {
-    id: 3,
-    title:
-      "Labore enim consequat nostrud aliqua voluptate amet excepteur sint qui deserunt ipsum ullamco minim.",
+    id: "3",
+    title: "Task 003",
     group_id: 1,
   },
-  { id: 4, title: "Adipisicing in do velit ea.", group_id: 1 },
+  { id: "4", title: "Task 004", group_id: 1 },
   {
-    id: 5,
-    title: "Sint consectetur exercitation proident dolor excepteur qui.",
+    id: "5",
+    title: "Task 005",
     group_id: 2,
   },
 ];

@@ -1,7 +1,7 @@
 import React from "react";
 import { Droppable } from "react-beautiful-dnd";
 import { IoMdAdd } from "react-icons/io";
-// import Task from "./Task";
+import Task from "./Task";
 
 const NewTaskBtn = () => {
   return (
@@ -12,20 +12,21 @@ const NewTaskBtn = () => {
   );
 };
 
-const Group = ({ group, tasks }) => {
+const Group = ({ groupId, tasks, title }) => {
   return (
     <div className="flex flex-col min-w-[20rem] w-80 gap-3">
-      <p className="font-semibold text-xl">{group}</p>
-      <Droppable droppableId={group}>
+      <p className="font-semibold text-xl">{title}</p>
+      <Droppable droppableId={groupId.toString()}>
         {(provided) => (
           <div
             {...provided.droppableProps}
             ref={provided.innerRef}
             className="flex flex-col bg-zinc-100 h-fit w-full rounded-md p-4 gap-2"
           >
-            {/* {tasks.map((task, index) => (
-              <Task key={task.id} task={task} index={index} />
-            ))} */}
+            {tasks.map((task, index) => {
+              return <Task key={task.id} task={task} index={index} />;
+            })}
+            {provided.placeholder}
           </div>
         )}
       </Droppable>
