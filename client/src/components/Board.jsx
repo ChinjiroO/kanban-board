@@ -15,7 +15,7 @@ const addToGroup = (group, index, task) => {
   return result;
 };
 
-const generateGroups = (bId) => {
+const generateGroups = (bId, groups, tasks) => {
   let splitBoardId = parseInt(bId?.split("board-")[1]);
   return groups
     .filter((g) => g.board_id === splitBoardId)
@@ -23,7 +23,7 @@ const generateGroups = (bId) => {
     .reduce(
       (acc, listKey) => ({
         ...acc,
-        [listKey]: taskLists.filter((task) => task.group_id === listKey),
+        [listKey]: tasks.filter((task) => task.group_id === listKey),
       }),
       {}
     );
@@ -31,12 +31,34 @@ const generateGroups = (bId) => {
 
 const Board = ({ boards }) => {
   let { board_id } = useParams();
-  const [tasks, setTasks] = useState(generateGroups(board_id));
+  const [groupsLocal, setGroupsLocal] = useState([]);
+  const [tasksLocal, setTasksLocal] = useState([]);
+  const [tasks, setTasks] = useState(
+    generateGroups(board_id, groupsLocal, tasksLocal)
+  );
   const [currentBoard, setCurrentBoard] = useState(null);
   const [groupByBoard, setGroupByBoard] = useState(null);
+  console.log(tasks);
 
   useEffect(() => {
-    setTasks(generateGroups(board_id));
+    function getGroups() {
+      const groups = JSON.parse(localStorage.getItem("groups"));
+      if (groups) {
+        setGroupsLocal(groups);
+      }
+    }
+    function getTasks() {
+      const tasks = JSON.parse(localStorage.getItem("tasks"));
+      if (tasks) {
+        setTasksLocal(tasks);
+      }
+    }
+
+    getGroups();
+    getTasks();
+
+    setTasks(generateGroups(board_id, groupsLocal, tasksLocal));
+
     let splitBoardId = parseInt(board_id?.split("board-")[1]);
 
     function getBoardByUrl(url) {
@@ -48,7 +70,7 @@ const Board = ({ boards }) => {
     setCurrentBoard(getBoardByUrl(splitBoardId));
 
     function getGroupsByBoard(boardId) {
-      return groups.filter((g) => g.board_id === boardId);
+      return groupsLocal.filter((g) => g.board_id === boardId);
     }
     setGroupByBoard(getGroupsByBoard(splitBoardId));
   }, [boards, board_id]);
@@ -98,46 +120,3 @@ const Board = ({ boards }) => {
 };
 
 export default Board;
-
-const groups = [
-  {
-    id: 1,
-    title: "On going",
-    board_id: 1,
-  },
-  {
-    id: 2,
-    title: "In progress",
-    board_id: 1,
-  },
-  {
-    id: 3,
-    title: "Done",
-    board_id: 1,
-  },
-  {
-    id: 4,
-    title: "test",
-    board_id: 4,
-  },
-];
-
-const taskLists = [
-  { id: "1", title: "Task 001", group_id: 1 },
-  {
-    id: "2",
-    title: "Task 002",
-    group_id: 2,
-  },
-  {
-    id: "3",
-    title: "Task 003",
-    group_id: 1,
-  },
-  { id: "4", title: "Task 004", group_id: 1 },
-  {
-    id: "5",
-    title: "Task 005",
-    group_id: 2,
-  },
-];
