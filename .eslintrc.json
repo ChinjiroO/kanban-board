@@ -1,14 +1,28 @@
 {
   "root": true,
   "env": {
-    "browser": true,
     "commonjs": true,
     "es2021": true,
     "node": true
   },
-  "extends": ["eslint:recommended", "prettier"],
+  "extends": [
+    "eslint:recommended",
+    "prettier",
+    "airbnb-base",
+    "plugin:node/recommended"
+  ],
   "parserOptions": {
     "ecmaVersion": "latest"
   },
-  "rules": {}
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": "error",
+    "semi": "off",
+    "no-unused-vars": "warn",
+    "no-console": "off",
+    "func-names": "off",
+    "no-plusplus": "off",
+    "no-process-exit": "off",
+    "class-methods-use-this": "off"
+  }
 }
