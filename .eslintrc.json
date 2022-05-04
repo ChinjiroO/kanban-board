@@ -9,14 +9,14 @@
     "eslint:recommended",
     "prettier",
     "airbnb-base",
-    "plugin:node/recommended"
+    "plugin:node/recommended",
+    "plugin:prettier/recommended"
   ],
   "parserOptions": {
     "ecmaVersion": "latest"
   },
-  "plugins": ["prettier"],
   "rules": {
-    "prettier/prettier": "error",
+    "prettier/prettier": ["error", { "singleQuote": true, "semi": true }],
     "semi": "off",
     "no-unused-vars": "warn",
     "no-console": "off",
