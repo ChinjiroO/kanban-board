@@ -23,6 +23,8 @@
     "func-names": "off",
     "no-plusplus": "off",
     "no-process-exit": "off",
-    "class-methods-use-this": "off"
+    "class-methods-use-this": "off",
+    "global-require": "off",
+    "import/no-dynamic-require": "off"
   }
 }
