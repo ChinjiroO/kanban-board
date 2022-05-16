@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import Board from "./components/Board";
+import { LoginPage } from "./pages";
 
 function App() {
   const [open, setOpen] = useState(false);
@@ -25,11 +26,12 @@ function App() {
 
   return (
     <div className="h-screen overflow-hidden">
-      <Navbar onClick={handleOpen} open={open} />
+      {/* <Navbar onClick={handleOpen} open={open} /> */}
       <main className="flex bg-white h-full">
         {open ? <Sidebar boards={boards} /> : null}
         <Routes>
           <Route index element={<Board boards={boards[0]} />} />
+          <Route path="login" element={<LoginPage />} />
           <Route path=":board_id" element={<Board boards={boards} />} />
         </Routes>
       </main>
