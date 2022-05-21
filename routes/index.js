@@ -1,5 +1,5 @@
-const boards = require('./boards');
+const users = require('./users');
 
 module.exports = (app) => {
-  app.use('/boards', boards);
+  app.use('/users', users);
 };
