@@ -1,12 +1,16 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class users extends Model {
+  class boards extends Model {
     static associate(models) {
-      users.hasMany(models.boards, { foreignKey: 'user_id' });
+      boards.belongsTo(models.users, {
+        foreignKey: 'user_id',
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      });
     }
   }
-  users.init(
+  boards.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -14,25 +18,23 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         allowNull: false,
       },
-      username: {
+      name: {
         type: DataTypes.STRING,
-        unique: true,
         allowNull: false,
       },
-      email: {
-        type: DataTypes.STRING,
-        unique: true,
+      user_id: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-      },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'id',
+        },
       },
     },
     {
       sequelize,
-      modelName: 'users',
+      modelName: 'boards',
     }
   );
-  return users;
+  return boards;
 };

@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const userRouter = require('./routes/users');
+const boardRouter = require('./routes/boards');
 
 const port = process.env.PORT || 5000;
 const app = express();
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/users', userRouter);
+app.use('/boards', boardRouter);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Node.js, Express, and Postgres API started' });
