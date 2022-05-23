@@ -2,7 +2,12 @@ const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class boards extends Model {
-    // static associate(models) {}
+    static associate(models) {
+      boards.belongsTo(models.users, {
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      });
+    }
   }
   boards.init(
     {
@@ -15,6 +20,14 @@ module.exports = (sequelize, DataTypes) => {
       name: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'id',
+        },
       },
     },
     {
