@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   class boards extends Model {
     static associate(models) {
       boards.belongsTo(models.users, {
+        foreignKey: 'user_id',
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       });
